@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>yixiang1019tw 交誼關係榜</title>
+
+<style>
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body{
+  font-family:"Noto Sans TC", center;
+  background:linear-gradient(500deg,#a3ceff,#d2b6ff);
+}
+
+/* HEADER */
+.header{
+  text-align:center;
+  font-size:24px;
+}
+
+/* TOOLBAR */
+.toolbar{
+  padding:12px 20px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  align-items:center;
+}
+
+input{
+  padding:10px 14px;
+  border-radius:10px;
+  border:1px solid #ddd;
+  min-width:300px;
+  outline:none;
+}
+
+/* BUTTON GROUP */
+.btn-group{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:8px;
+}
+
+.btn{
+  border:none;
+  padding:6px 12px;
+  border-radius:999px;
+  cursor:pointer;
+  background:#eef2ff;
+  font-size:14px;
+  transition:0.2s;
+}
+
+.btn:hover{
+  background:#dbeafe;
+  transform:translateY(-1px);
+}
+
+/* GRID */
+.container{
+  display:grid;
+  grid-template-columns:repeat(4,350px);
+  gap:20px;
+  padding:20px;
+
+  justify-content:center;
+  align-content:start;
+}
+
+/* =========================
+   CARD（固定尺寸版本）
+========================= */
+.card{
+  background:white;
+  border-radius:16px;
+  cursor:pointer;
+  transition:.25s;
+
+  box-shadow:0 12px 28px rgba(0,0,0,.10);
+  border-left:4px solid transparent;
+
+  /* 固定尺寸 */
+  width:345px;
+  height:150px;
+
+  display:flex;
+  align-items:center;
+  padding:14px;
+  overflow:hidden;
+
+  justify-self:center;
+
+  box-sizing:border-box;
+}
+
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 18px 40px rgba(0,0,0,0.14);
+}
+
+/* COLORS */
+.top1{ border-left-color:#8b5cf6; }
+.top2{ border-left-color:#f65c97; }
+.top3{ border-left-color:#3977ff; }
+.top4{ border-left-color:#10b981; }
+.top5{ border-left-color:#f59e0b; }
+.top6{ border-left-color:#df5f2d; }
+.top7{ border-left-color:#ef4444; }
+
+/* TOP */
+.top{
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+
+/* AVATAR */
+.avatar{
+  width:75px;
+  height:75px;
+  border-radius:50%;
+  object-fit:cover;
+  border:2px solid #eee;
+}
+
+/* TEXT */
+.name{
+  font-size:22px;
+  font-weight:800;
+  margin:0;
+}
+
+.meta{
+  font-size:16px;
+  color:#6b7280;
+  margin:2px 0 0 0;
+}
+
+/* BADGES */
+.badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:4px;
+  margin-top:4px;
+}
+
+.badge{
+  font-size:14px;
+  padding:3px 8px;
+  border-radius:999px;
+  background:#f3f4f6;
+}
+.badge.top1{ background:#dbeafe; color:#8b5cf6; }
+.badge.top2{ background:#dbeafe; color:#f65c97; }
+.badge.top3{ background:#dbeafe; color:#3977ff; }
+.badge.top4{ background:#dbeafe; color:#10b981; }
+.badge.top5{ background:#dbeafe; color:#f59e0b; }
+.badge.top6{ background:#dbeafe; color:#df5f2d; }
+.badge.top7{ background:#dbeafe; color:#ef4444; }
+
+/* MODAL */
+.modal-bg{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.55);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+
+.modal{
+  width:560px;
+  max-width:92%;
+  background:white;
+  border-radius:16px;
+  padding:20px;
+  max-height:85vh;
+  overflow:auto;
+}
+
+.close{
+  float:right;
+  cursor:pointer;
+  font-size:18px;
+  opacity:0.6;
+}
+
+.profile{
+  display:flex;
+  gap:14px;
+  align-items:center;
+  margin-bottom:12px;
+}
+
+.avatar-big{
+  width:100px;
+  height:100px;
+  border-radius:50%;
+}
+
+.section-title{
+  margin-top:10px;
+  font-size:16px;
+  color:#9ca3af;
+  text-transform:uppercase;
+}
+
+.section-content{
+  font-size:13px;
+  color:#374151;
+  white-space:pre-line;
+}
+
+/* 平板 */
+@media (max-width:1100px){
+  .container{
+    grid-template-columns:repeat(3,260px);
+  }
+}
+
+/* 小平板 */
+@media (max-width:850px){
+  .container{
+    grid-template-columns:repeat(2,260px);
+  }
+}
+
+/* 手機 */
+@media (max-width:580px){
+  .container{
+    grid-template-columns:260px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <h2>yixiang1019tw 交誼關係榜</h2>
+</div>
+
+<div class="toolbar">
+  <input id="search" placeholder="搜尋姓名 / 關係 ">
+
+  <div class="btn-group">
+    <button class="btn" onclick="setFilter('all')">全部</button>
+    <button class="btn" onclick="setFilter('top1')">摯愛</button>
+    <button class="btn" onclick="setFilter('top2')">摯友</button>
+    <button class="btn" onclick="setFilter('top3')">夥伴</button>
+    <button class="btn" onclick="setFilter('top4')">好友</button>
+    <button class="btn" onclick="setFilter('top5')">人寵</button>
+    <button class="btn" onclick="setFilter('top6')">曖昧</button>
+    <button class="btn" onclick="setFilter('top7')">其他</button>
+  </div>
+</div>
+
+<div class="container" id="list"></div>
+
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="close" onclick="closeModal()">✖</div>
+
+    <div class="profile">
+      <img id="m_avatar" class="avatar-big">
+      <div>
+        <h2 id="m_name"></h2>
+        <div id="m_meta"></div>
+        <div id="m_roles"></div>
+      </div>
+    </div>
+
+    <div id="custom"></div>
+  </div>
+</div>
+
+<div class="header">
+  <p style="font-size:14px;color:#666;">© 2026 yixiang1019tw – All Rights Reserved</p>
+</div>
+
+<script>
+
+
+
+const members=[
+{
+ name:"𝓨𝓲 𝓧𝓲𝓪𝓷𝓰(王顗翔)",
+ role:[
+  {text:"本人", type:"top7"},
+ ],
+ level:"",
+ meta:"(𝑰/𝑬)𝑵𝑻𝑱 | 一位有點才華的少年",
+ avatar:"https://unavatar.io/instagram/yixiang1019tw",
+ sections:[
+  {title:"介紹", content:
+  `14y |（𝑰/𝑬)𝑵𝑻𝑱 | 一位有點才華的少年
+𝓔𝓲𝓽𝓱𝓮𝓻 𝓭𝓸 𝓷𝓸𝓽𝓱𝓲𝓷𝓰 𝓸𝓻 𝓫𝓮 𝓽𝓱𝓮 𝓯𝓲𝓻𝓼𝓽.
+要嘛不做，要嘛就做第一
+
+我是Neil ，一位來自台灣的14 歲青少年。
+我相信制度與創新是未來社會的關鍵，而青年，也能是改變世界的核心角色。`},
+  {title:"經歷", content:
+  `💼 現任職務  
+- 台灣數位青年文化中心：領導人 & 執行長  
+- TWRCI臺灣鐵道文化意象 執行長
+- 台灣 Minecraft 伺服主聯邦 (TMSC)：聯主  
+- 水桶伺服器：插件師 & 管理員，兼副服主  
+- 星曜伺服器：伺服主  
+- 桃園市大成國中科技中心：資科金牌選手  
+- YXSI 國際戰略行動團隊：最高領導人
+- TDYCC 台灣數位青年文化中心：最高領導人
+
+📚 經歷背景  
+- 2025 桃園市國中資訊科技實作競賽 金牌  
+- 醉夢生存伺服器：伺服主  
+- 中華生存伺服器：副服主
+- 醉夢工作室：創辦人兼負責人
+- 水桶資訊工作室 總監  
+- 八月、冰月、老爺、繁星伺服器：插件師  
+- TD-Store、醉夢商城：老闆  
+- Complexity IQ評估系統：構建者
+- 4年 15+ minecraft 插件師 經驗
+- 5年 5+ minecraft 伺服主 經驗`},
+ ]
+},
+{
+ name:"林煜晨",
+ role:[
+  {text:"摯愛", type:"top1"},
+  {text:"好哥們", type:"top7"},
+  {text:"好友吉娃娃", type:"top4"}
+ ],
+ level:["top1","top7","top4"],
+ meta:"我家的小可愛貓貓💗",
+ avatar:"https://scontent.cdninstagram.com/v/t51.82787-19/612236947_17974703159975039_5142809197034638434_n.jpg?stp=dst-jpg_s206x206_tt6&_nc_cat=101&ccb=7-5&_nc_sid=bf7eb4&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4xMDgwLkMzIn0%3D&_nc_ohc=Tc94gO1fybwQ7kNvwHGf0g9&_nc_oc=AdqdDIiLFtQPDXSF_mSOGsg1bZYRwsrrD_qgWDYYEwdyOUdBkt8mzxtQiU3rOiC9IBn7l9y9mQfWba-XK9RIBaa7&_nc_zt=24&_nc_ht=scontent.cdninstagram.com&_nc_gid=oJ53ju1hGztiji-9XMqZng&_nc_ss=7b6a8&oh=00_AQDvEI-gyKgYRiPuVucI3nuzoc66ffIgWajql7H4DBHfyQ&oe=6A49DB6D",
+ sections:[
+  {title:"盡情期待", content:
+  ``},
+ ]
+},
+{
+ name:"smallperson 小人",
+ role:[
+  {text:"摯友", type:"top2"},
+  {text:"好哥們", type:"top7"},
+  {text:"好友吉娃娃", type:"top4"},
+ ],
+ level:["top2","top7","top4"],
+ meta:"我家的INTP小人人",
+ avatar:"https://scontent.cdninstagram.com/v/t51.82787-19/581969503_17938471560095330_4835035438315721221_n.jpg?stp=dst-jpg_s206x206_tt6&_nc_cat=104&ccb=7-5&_nc_sid=bf7eb4&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy41MzUuQzMifQ%3D%3D&_nc_ohc=qTGqg0-koHUQ7kNvwEMrl_2&_nc_oc=Ado9mWau1xxYeXRDOmCD0tLbW96olC28VZzyLoXm7HXtSUh0hnkXpNWKot098P7Mx3_tCmlPQiJDq_Mn59rmRKBk&_nc_zt=24&_nc_ht=scontent.cdninstagram.com&_nc_gid=zAMUR1vPxJQZJPpz6BTaWQ&_nc_ss=7b6a8&oh=00_AQDpFJPgvPTCAp2cso2lHN104_wFQ72zC0fILWYJkUCsdQ&oe=6A4B15AF",
+ sections:[
+  {title:"座右銘", content:
+  `不要等待完美的時刻。把握當下，讓它變得完美。
+Don't wait for the perfect moment. Take the moment and make it perfect.`},
+ ]
+},
+{
+ name:"朱珊醇",
+ role:[
+  {text:"好友", type:"top4"},
+ ],
+ level:"top4",
+ meta:"山上的醇珊豬",
+ avatar:"https://scontent.cdninstagram.com/v/t51.82787-19/729943239_17894868054535814_4025962588134174395_n.jpg?stp=dst-jpg_s206x206_tt6&_nc_cat=109&ccb=7-5&_nc_sid=bf7eb4&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4xMDgwLkMzIn0%3D&_nc_ohc=fciejmA6DPkQ7kNvwG4Q8rw&_nc_oc=AdpojltsDbGZDzzac9YOUYuTmpOq3HrSB7fJbyth2SIJ-5LY9P3U9dVHbIxeQFZrSHHWeSS44qpuEOip-hIIONaG&_nc_zt=24&_nc_ht=scontent.cdninstagram.com&_nc_gid=WyLRuyC1UO2D1OpCOzUtgQ&_nc_ss=7b6a8&oh=00_AQCoL0IwhA-A0a6kAnEYQGmS0dmf_dI8IiOv0IAP85WPfA&oe=6A49C95C",
+ sections:[
+  {title:"盡情期待", content:
+  ``},
+ ]
+},
+{
+ name:"謝品震(小震震)",
+ role:[
+  {text:"男寵", type:"top5"},
+  {text:"小男娘", type:"top6"},
+ ],
+ level:"top5",
+ meta:"射手座小男娘",
+ avatar:"https://scontent.ftpe13-3.fna.fbcdn.net/v/t39.30808-1/476647659_1101585418387868_3184968915358187_n.jpg?stp=dst-jpg_tt6&cstp=mx1080x1094&ctp=s200x200&_nc_cat=105&ccb=1-7&_nc_sid=e99d92&_nc_ohc=6r3ENLs_D6IQ7kNvwEvVStl&_nc_oc=AdrATJKkM7VKXXo3dHP985PYpHfsT-lI5NF4arqzDukniQTd94VL7p1bHK4E8PgUygII05BwltIVdzMz2ofz4gmX&_nc_zt=24&_nc_ht=scontent.ftpe13-3.fna&_nc_gid=HZAZpWkw-pX9U62eJrvd2w&_nc_ss=7b2a8&oh=00_AQACujaeFacH3O5iq7oUiF13fdlM21BGbGQkj0wcaQH7sQ&oe=6A4B2BB6",
+ sections:[
+  {title:"盡情期待", content:
+  ``},
+ ]
+},
+{
+ name:"劉哲睿(前夫哥)",
+ role:[
+  {text:"前夫哥", type:"top7"},
+ ],
+ level:"top7",
+ meta:"巨蟹座變態色狼前夫哥",
+ avatar:"https://scontent.ftpe13-4.fna.fbcdn.net/v/t39.30808-1/725664366_1040617208625156_4706504595778614601_n.jpg?stp=dst-jpg_tt6&cstp=mx736x736&ctp=s200x200&_nc_cat=101&ccb=1-7&_nc_sid=e99d92&_nc_ohc=u3IJIFd4ByQQ7kNvwGS72Mi&_nc_oc=AdrpE0RuYgeU5xKVnreEAThG0mIVGGt9sC3mEYe-CbITN2QcE3lqnB7EoSsUHlJKG48PaE3XbpPixf_T9cOPyYfm&_nc_zt=24&_nc_ht=scontent.ftpe13-4.fna&_nc_gid=B36FaRpQNJ5ORB1099nHZg&_nc_ss=7b2a8&oh=00_AQACVZzlQYfqTNHK-hezhYX-8IA2yyseOy7GtVLgiqmjTg&oe=6A4B1540",
+ sections:[
+  {title:"盡情期待", content:
+  ``},
+ ]
+},
+{
+ name:"許誠佑",
+ role:[
+  {text:"技術夥伴", type:"top3"},
+  {text:"遊戲開發者", type:"top7"},
+ ],
+ level:["top3","top7"],
+ meta:"許🎸(キョ・チェンヨウ)",
+ avatar:"https://scontent.ftpe13-4.fna.fbcdn.net/v/t39.30808-1/490239142_1220964179630857_8382425979409163280_n.jpg?stp=dst-jpg_tt6&cstp=mx400x400&ctp=s200x200&_nc_cat=102&ccb=1-7&_nc_sid=e99d92&_nc_ohc=qnljVEY9DtAQ7kNvwFEuRyb&_nc_oc=AdpuV1RWyeHEDiIVm1V51XRPDzPkPEapcSSw9WKGCUp4qayaUoSBAUT54jqiq__G2y5yj-dpBhdvX-uYyiw1rChY&_nc_zt=24&_nc_ht=scontent.ftpe13-4.fna&_nc_gid=Bzzx7Luk-ReT3WIGw8YKQw&_nc_ss=7b2a8&oh=00_AQBCG1GMoOD_H54Kp1bN4ZIx8CIlB_r09nmy8guesLaabw&oe=6A4B03C9",
+ sections:[
+  {title:"介紹", content:
+  `|DC•820|ԅ(¯﹃¯ԅ)♏
+寶🩷：@楚門海豚物語🐬(吉他)
+ギターを弾くと人は幸せになれる(⁠￣⁠(⁠ｴ⁠)⁠￣⁠)⁠ﾉ
+音樂可以治療你的傷疤( ‵▽′)ψ
+———
+不是 楚門夏至 買不起而是，
+楚門海豚物語 更有性價比！`},
+ ]
+},
+{
+ name:"黃至崙",
+ role:[
+  {text:"資訊科技夥伴", type:"top3"},
+  {text:"好友吉娃娃", type:"top4"},
+ ],
+ level:["top3","top4"],
+ meta:"NK_滑鼠雷諾德吉娃娃烤到的地瓜",
+ avatar:"https://scontent.cdninstagram.com/v/t51.82787-19/576007103_17913393297231686_4322574909649817835_n.jpg?stp=dst-jpg_s150x150_tt6&_nc_cat=111&ccb=7-5&_nc_sid=f7ccc5&efg=eyJ2ZW5jb2RlX3RhZyI6InByb2ZpbGVfcGljLnd3dy4xMDgwLkMzIn0%3D&_nc_ohc=C5cFxzsfmFUQ7kNvwGka_HQ&_nc_oc=Adplo-973rMiRs2f8LJbDxPPs7Fdlql9s5rPsTzisdhLTQ9P5KBjc6tqHnXpY6S-fFiNmnQUzgCjZSs3EgkbdthH&_nc_zt=24&_nc_ht=scontent.cdninstagram.com&_nc_gid=cTczXbn2z4Smiij-h1dj6g&_nc_ss=7b6a8&oh=00_AQBwf7apuVpHnzoTH4SZ2ryaIDZaKH-GY2U5wo-UzjyP-g&oe=6A4B1FE4",
+ sections:[
+  {title:"盡情期待", content:
+  ``},
+ ]
+},
+{
+ name:"梁公子",
+ role:[
+  {text:"好友吉娃娃", type:"top4"},
+ ],
+ level:["top4"],
+ meta:"NK 1yx吉娃娃",
+ avatar:"https://cdn.discordapp.com/avatars/928656702054744124/45f7695bd0c2e37e1fd0041fe3693f83.png?size=512",
+ sections:[
+  {title:"盡情期待", content:
+  ``},
+ ]
+},
+{
+ name:"黃晨揖",
+ role:[
+  {text:"資訊科技夥伴", type:"top3"},
+  {text:"學權會夥伴", type:"top3"},
+ ],
+ level:["top3"],
+ meta:"亞特蘭提斯華鯊主義共和國總理",
+ avatar:"https://images-ext-1.discordapp.net/external/TC8DpLCGKhYP2GYSRdgcR_5_ckhir04mG4jmT9COBBA/%3Fsize%3D4096/https/cdn.discordapp.com/avatars/1302615048086225013/9c5044aaadebadd344839b785e713135.webp?format=webp&width=960&height=960",
+ sections:[
+  {title:"自介", content:
+  `大成國中學權會 元老
+數理資優班墊底生（？）
+音樂創作者
+僅次於王顗翔的電腦天才
+小揖資訊服務執行長
+Vtuber聚集地創辦人`},
+
+  {title:"經歷", content:
+   `曾獲得科展生物組第一名，進入全國賽（7/19/20比國展）
+劍橋英語檢定滿分通過
+全國資訊大賽第三名
+少年鼓王 `},
+
+  {title:"盡情期待", content:
+  ``},
+ ]
+},
+{
+ name:"Jasper斯柏(鍾濬豐)",
+ role:[
+  {text:"攝影師", type:"top7"},
+  {text:"藝術家", type:"top7"},
+  {text:"TWRCI夥伴", type:"top3"},
+ ],
+ level:["top3","top7"],
+ meta:"平面設計•攝影•活動策劃",
+ avatar:"https://media.discordapp.net/attachments/1505073974843805787/1521940332084723803/unnamed_1.jpg?ex=6a46a8e3&is=6a455763&hm=d2dddbca717156d777d046bd98e16f250c267583dfc0c4cfffbf2a41cc0e70b4&=&format=webp&width=960&height=960",
+ sections:[
+  {title:"介紹", content:
+  `Kb&Piano 🎹
+Vn. 🎻
+平面設計•攝影•活動策劃
+-
+8/23 back number
+10/9.10 優里
+2027 YOASOBI`},
+ ]
+},
+{
+ name:"盡情期待",
+ role:[
+  {text:"想上榜，請私訊洽詢", type:"top7"},
+ ],
+ level:"",
+ meta:"盡情期待",
+ avatar:"https://truth.bahamut.com.tw/s01/202506/forum/60143/7ae951bf904e4c1506e5ca5a680e39fc.JPG?w=1000",
+ sections:[
+  {title:"盡情期待", content:
+  ``},
+ ]
+}
+
+];
+
+let currentFilter="all";
+
+const list=document.getElementById("list");
+const search=document.getElementById("search");
+
+search.addEventListener("input",render);
+
+function setFilter(f){
+  currentFilter=f;
+  render();
+}
+
+function render(){
+  list.innerHTML="";
+  const key=search.value.toLowerCase();
+
+  members.forEach(m=>{
+
+    const levels = Array.isArray(m.level) ? m.level : [m.level];
+
+    const text=(m.name+" "+m.meta).toLowerCase();
+
+    const okSearch=text.includes(key);
+
+    const okFilter =
+      currentFilter==="all" ||
+      levels.includes(currentFilter);
+
+    if(okSearch && okFilter){
+
+      const div=document.createElement("div");
+      div.className=`card ${levels[0]}`;
+
+      let rolesHTML="";
+      m.role.forEach(r=>{
+        rolesHTML += `<span class="badge ${r.type}">${r.text}</span>`;
+      });
+
+      div.innerHTML=`
+      <div class="top">
+        <img class="avatar" src="${m.avatar}">
+        <div>
+          <div class="name">${m.name}</div>
+          <div class="meta">${m.meta}</div>
+          <div class="badges">${rolesHTML}</div>
+        </div>
+      </div>
+      `;
+
+      div.onclick=()=>openModal(m);
+      list.appendChild(div);
+    }
+  });
+}
+
+function openModal(m){
+document.getElementById("modal").style.display="flex";
+document.getElementById("m_avatar").src=m.avatar;
+document.getElementById("m_name").innerText=m.name;
+document.getElementById("m_meta").innerText=m.meta;
+
+let rolesHTML="";
+m.role.forEach(r=>{
+ rolesHTML += `<span class="badge ${r.type}">${r.text}</span>`;
+});
+
+document.getElementById("m_roles").innerHTML=rolesHTML;
+
+let html="";
+m.sections.forEach(s=>{
+html+=`
+<div class="section-title">${s.title}</div>
+<div class="section-content">${s.content}</div>
+`;
+});
+
+document.getElementById("custom").innerHTML=html;
+}
+
+function closeModal(){
+document.getElementById("modal").style.display="none";
+}
+
+window.onclick=function(e){
+if(e.target.id==="modal") closeModal();
+}
+
+render();
+
+</script>
+
+</body>
+</html>
